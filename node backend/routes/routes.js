@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var pool = require('../db');
 
-// Create an route
+// Create a route
 router.post('/', async (req, res) => {
   try {
     const { route_name, route_grade, spot_id, wall_id } = req.body;
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM routes WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM routes WHERE route_id = $1', [id]);
     if (result.rows.length === 0) return res.status(404).send('route not found');
     res.json(result.rows[0]);
   } catch (err) {
@@ -47,7 +47,7 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { route_name, route_grade, spot_id, wall_id } = req.body;
     const result = await pool.query(
-      'UPDATE routes SET route_name = $1, route_grade = $2, spot_id = $3, wall_id = $4 WHERE id = $5 RETURNING *',
+      'UPDATE routes SET route_name = $1, route_grade = $2, spot_id = $3, wall_id = $4 WHERE spot_id = $5 RETURNING *',
       [route_name, route_grade, spot_id, wall_id, id]
     );
     if (result.rows.length === 0) return res.status(404).send('route not found');
@@ -62,7 +62,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('DELETE FROM routes WHERE id = $1 RETURNING *', [id]);
+    const result = await pool.query('DELETE FROM routes WHERE spot_id = $1 RETURNING *', [id]);
     if (result.rows.length === 0) return res.status(404).send('route not found');
     res.send('route deleted');
   } catch (err) {

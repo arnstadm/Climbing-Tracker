@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var pool = require('../db');
 
-// Create an route
+// Create a spot
 router.post('/', async (req, res) => {
   try {
     const { spot_name, spot_location } = req.body;
@@ -28,12 +28,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Read single route
+// Read single spot
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM spots WHERE id = $1', [id]);
-    if (result.rows.length === 0) return res.status(404).send('route not found');
+    const result = await pool.query('SELECT * FROM spots WHERE spot_id = $1', [id]);
+    if (result.rows.length === 0) return res.status(404).send('spot not found');
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err.message);
@@ -41,16 +41,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update route
+// Update spot
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { spot_name, spot_location } = req.body;
     const result = await pool.query(
-      'UPDATE spots SET spot_name = $1, spot_location = $2 WHERE id = $3 RETURNING *',
+      'UPDATE spots SET spot_name = $1, spot_location = $2 WHERE spot_id = $3 RETURNING *',
       [spot_name, spot_location, id]
     );
-    if (result.rows.length === 0) return res.status(404).send('route not found');
+    if (result.rows.length === 0) return res.status(404).send('spot not found');
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err.message);
@@ -58,13 +58,13 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete route
+// Delete spot
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('DELETE FROM spots WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) return res.status(404).send('route not found');
-    res.send('route deleted');
+    const result = await pool.query('DELETE FROM spots WHERE spot_id = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) return res.status(404).send('spot not found');
+    res.send('spot deleted');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

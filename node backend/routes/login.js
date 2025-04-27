@@ -6,7 +6,7 @@ var bcrypt = require('bcrypt');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-
+//process login and return a token + user id for localStorage in webapp
 router.post('/', async (req, res) => {
     const { climber_name, password } = req.body
     try {

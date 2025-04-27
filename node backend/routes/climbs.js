@@ -54,7 +54,7 @@ router.get('/climber/:id', async (req, res) => {
     }
 })
 
-// Update climbs
+// Update climb
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,7 +71,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete climbs
+// Delete climb
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;

@@ -3,7 +3,7 @@ var router = express.Router();
 var pool = require('../db');
 var bcrypt = require('bcrypt');
 
-
+//create a new user. hash password and store in db
 router.post('/', async (req, res) => {
     const { climber_name, password } = req.body
     try {
