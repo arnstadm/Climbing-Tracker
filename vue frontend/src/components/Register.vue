@@ -8,6 +8,7 @@ const password = ref('')
 const error = ref('')
 const router = useRouter()
 const users = ref<Array<any>>([]);
+const message = ref('');
 
 const { post } = useApi('register');
 const register = async () => {

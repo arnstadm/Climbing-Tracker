@@ -36,6 +36,7 @@ function logout() {
           <RouterLink to="/AddSpot">Add Spot</RouterLink>
           <RouterLink to="/AddWall">Add Wall</RouterLink>
           <RouterLink to="/AddRoute">Add Route</RouterLink>
+          <RouterLink to="/PhotoAnalyzer">Photoanalyser</RouterLink>
           <button @click="logout">Logout</button>
         </template>
       </nav>

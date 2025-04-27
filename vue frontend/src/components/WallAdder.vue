@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useApi } from '@/composables/useApi';
 
 // Destructure API methods
-const { fetchAll: fetchAllWalls, post: postWall, put: putWall, del: delWall } = useApi('walls');
+const { fetchAll: fetchAllWalls, post: postWall, del: delWall } = useApi('walls');
 const { fetchAll: fetchAllSpots } = useApi('spots');
 
 // State
@@ -42,8 +42,8 @@ const addWall = async () => {
   };
 
   try {
-      const data = await postWall(newWall);
-      walls.value.push(data);
+      await postWall(newWall);
+      await fetchWalls();
 
     // Reset form
     wallName.value = '';

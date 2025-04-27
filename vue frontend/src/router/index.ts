@@ -56,6 +56,12 @@ const router = createRouter({
       component: () => import('../views/AddSpot.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/PhotoAnalyzer',
+      name: 'PhotoAnalyzer',
+      component: () => import('../views/PhotoAnalyzer.vue'),
+      meta: { requiresAuth: true}
+    },
   ],
 })
 
