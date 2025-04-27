@@ -8,7 +8,6 @@ var logger = require('morgan');
 require('dotenv').config(); 
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var climbsRouter = require('./routes/climbs');
 var wallsRouter = require('./routes/walls');
 var routesRouter = require('./routes/routes');
@@ -32,7 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //app routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/climbs', climbsRouter);
 app.use('/walls', wallsRouter);
 app.use('/routes', routesRouter);

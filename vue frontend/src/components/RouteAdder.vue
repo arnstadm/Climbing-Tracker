@@ -6,10 +6,8 @@ import { watch } from 'vue';
 
 const { fetchAll: fetchAllRoutes, post: postRoute, put: putRoute, del: delRoute } = useApi('routes');
 
-// Destructure walls API methods
+// Destructure walls and spot API methods
 const { fetchAll: fetchAllWalls } = useApi('walls');
-
-// Destructure spots API methods
 const { fetchAll: fetchAllSpots } = useApi('spots');
 
 
@@ -23,6 +21,7 @@ const walls = ref<Array<any>>([]);
 const spots = ref<Array<any>>([]);
 const message = ref('');
 
+//Norwegian grades for outdoor climbing
 const grades =   [
   { "grade": "1", "description": "Walking terrain, no hands needed" },
   { "grade": "2", "description": "Simple scrambling, hands occasionally" },
@@ -49,11 +48,11 @@ const grades =   [
   { "grade": "11-", "description": "Possibly the hardest in Norway" }
 ];
 
+//fetching functions
 const fetchRoutes = async () => {
   try {
     const fetchedRoutes = await fetchAllRoutes();
 
-    // Enrich each route with spot_name and wall_name
     routes.value = fetchedRoutes.map((route: any) => {
       const spot = spots.value.find(s => s.spot_id === route.spot_id);
       const wall = walls.value.find(w => w.wall_id === route.wall_id);
@@ -86,6 +85,7 @@ const fetchSpots = async () => {
 };
 
 const addroute = async () => {
+  //checking if all values are filled
   if (!routeName.value || !selectedSpot.value || !selectedSpot.value.spot_id || !selectedWall.value || !selectedWall.value.wall_id ) return;
 
   const newroute = {
@@ -97,10 +97,10 @@ const addroute = async () => {
 
   try {
       const data = await postRoute(newroute);
-      routes.value.push(data);
+      await fetchRoutes();
     // Reset values
     routeName.value = '';
-    selectedSpot.value = null; // Reset selected spot
+    selectedSpot.value = null;
     selectedWall.value = null;
     selectedGrade.value = null;
     message.value = 'Route saved!';
@@ -110,15 +110,17 @@ const addroute = async () => {
   }
 };
 
-const deleteroute = async (id: number) => {
+//delete function
+const deleteroute = async (id: any) => {
   try {
     await delRoute(id);
-    routes.value = routes.value.filter((s) => s.id !== id);
+    routes.value = routes.value.filter((s) => s.route_id !== id);
   } catch (err) {
     message.value = 'Error deleting route.';
   }
 };
 
+//filters routes so only routes for chosen spot and wall are shown
 const filteredRoutes = computed(() => {
   if (!selectedSpot.value || !selectedWall.value) return [];
   return routes.value.filter(route =>
@@ -126,6 +128,7 @@ const filteredRoutes = computed(() => {
   );
 });
 
+//filters walls so only walls for chosen spot are shown
 const filteredWalls = computed(() => {
   if (!selectedSpot.value) return [];
   return walls.value.filter(wall => wall.spot_id === selectedSpot.value.spot_id);
@@ -151,7 +154,7 @@ onMounted(async () => {
         <h3>Choose spot:</h3>
         <select v-model="selectedSpot">
           <option disabled value="">-- Select a spot --</option>
-          <option v-for="spot in spots" :key="spot.id" :value="spot">
+          <option v-for="spot in spots" :key="spot.spot_id" :value="spot">
             {{ spot.spot_name }}
           </option>
         </select>
@@ -161,7 +164,7 @@ onMounted(async () => {
         <h3>Choose wall:</h3>
         <select v-model="selectedWall">
           <option disabled value="">-- Select a wall --</option>
-          <option v-for="wall in filteredWalls" :key="wall.id" :value="wall">
+          <option v-for="wall in filteredWalls" :key="wall.wall_id" :value="wall">
             {{ wall.wall_name }}
           </option>
         </select>
@@ -189,14 +192,14 @@ onMounted(async () => {
 
     <div v-if="selectedWall" class="existingRoutes">
       <h2>Existing routes:</h2>
-      <div v-for="route in filteredRoutes" :key="route.id" class="cardDisplay">
+      <div v-for="route in filteredRoutes" :key="route.route_id" class="cardDisplay">
         <p>
           <strong>{{ route.route_name }}</strong><br />
           Grade: {{ route.route_grade.grade }} - {{ route.route_grade.description }}<br />
           Spot: {{ route.spot_name }}<br />
           Wall: {{ route.wall_name }}<br />
         </p>
-        <button @click="deleteroute(route.id)">Delete</button>
+        <button @click="deleteroute(route.route_id)">Delete</button>
       </div>
     </div>
   </div>

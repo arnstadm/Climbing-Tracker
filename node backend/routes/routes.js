@@ -62,7 +62,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('DELETE FROM routes WHERE spot_id = $1 RETURNING *', [id]);
+    const result = await pool.query('DELETE FROM routes WHERE route_id = $1 RETURNING *', [id]);
     if (result.rows.length === 0) return res.status(404).send('route not found');
     res.send('route deleted');
   } catch (err) {

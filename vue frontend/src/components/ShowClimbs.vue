@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useApi } from '@/composables/useApi';
 
-const { fetchAll, fetchMy, post, put, del } = useApi('climbs');
+const { fetchMy, del } = useApi('climbs');
 const { fetchAll: fetchAllRoutes } = useApi('routes');
 const { fetchAll: fetchAllWalls } = useApi('walls');
 const { fetchAll: fetchAllSpots } = useApi('spots');
@@ -14,16 +14,10 @@ const spots = ref<Array<any>>([]);
 const walls = ref<Array<any>>([]);
 const routes = ref<Array<any>>([]);
 
-const fetchMyClimbs = async (id: number, identifier: string) => {
-  try {
-    climbs.value = await fetchMy(id, identifier);
-  } catch (err) {
-    message.value = 'Error fetching climbs.';
-  }
-};
 
+//delete function
 const deleteclimb = async (id: number) => {
-  if (confirm('Are you sure you want to delete this climb?')) {
+  if (confirm('Are you sure you want to delete this climb?')) { //confirmation on deletion
     try {
       await del(id);
       climbs.value = climbs.value.filter((s) => s.id !== id);
@@ -32,6 +26,15 @@ const deleteclimb = async (id: number) => {
     } catch (err) {
       message.value = 'Error deleting climb.';
     }
+  }
+};
+
+//fetching functions
+const fetchMyClimbs = async (id: number, identifier: string) => {
+  try {
+    climbs.value = await fetchMy(id, identifier);
+  } catch (err) {
+    message.value = 'Error fetching climbs.';
   }
 };
 
@@ -59,6 +62,7 @@ const fetchSpots = async () => {
   }
 };
 
+//matches spots, walls and routes to the climb
 const climbsWithDetails = computed(() => {
   return climbs.value.map((climb) => {
     const spot = spots.value.find((s) => s.spot_id === climb.spot_id);
@@ -79,7 +83,7 @@ onMounted(async () => {
   await fetchRoutes();
   await fetchwalls();
   await fetchSpots();
-  await fetchMyClimbs(Number(localStorage.getItem('climber_id')), 'climber');
+  await fetchMyClimbs(Number(localStorage.getItem('climber_id')), 'climber'); //uses id stored in localStorage to only get climbs from logged in user
 });
 </script>
 

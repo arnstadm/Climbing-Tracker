@@ -2,13 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useApi } from '@/composables/useApi';
 
-const { fetchAll, post, put, del } = useApi('spots');
+const { fetchAll, post, del } = useApi('spots');
 
 const spotName = ref('');
 const spotLocation = ref('');
 const spots = ref<Array<any>>([]);
 const message = ref('');
 
+//fetching spots
 const fetchSpots = async () => {
   try {
     spots.value = await fetchAll();
@@ -17,6 +18,7 @@ const fetchSpots = async () => {
   }
 };
 
+//post function
 const addSpot = async () => {
   if (!spotName.value || !spotLocation.value) return;
 
@@ -28,10 +30,9 @@ const addSpot = async () => {
   try {
       const data = await post(newSpot);
       spots.value.push(data);
-    }
-
-    spotName.value = '';
-    spotLocation.value = '';
+      //resets values
+      spotName.value = '';
+      spotLocation.value = '';
   } catch (err) {
     message.value = 'Error saving spot.';
   }
@@ -40,13 +41,16 @@ const addSpot = async () => {
 const deleteSpot = async (id: number) => {
   try {
     await del(id);
-    spots.value = spots.value.filter((s) => s.id !== id);
+    spots.value = spots.value.filter((s) => s.spot_id !== id);
   } catch (err) {
     message.value = 'Error deleting spot.';
   }
 };
 
-onMounted(fetchSpots);
+onMounted(async () => {
+  await fetchSpots();
+});
+
 </script>
 
 
@@ -69,9 +73,9 @@ onMounted(fetchSpots);
   </div>
   <div class="existingSpots">
     <h2>Spots:</h2>
-    <div v-for="spot in spots" :key="spot.id" class="cardDisplay">
+    <div v-for="spot in spots" :key="spot.spot_id" class="cardDisplay">
       <p>{{ spot.spot_name }} - {{ spot.spot_location }}</p>
-      <button @click="deleteSpot(spot.id)">Delete</button>
+      <button @click="deleteSpot(spot.spot_id)">Delete</button>
     </div>
   </div>
 </div>

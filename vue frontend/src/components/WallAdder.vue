@@ -13,7 +13,7 @@ const walls = ref<Array<any>>([]);
 const spots = ref<Array<{ spot_id: number; spot_name: string }>>([]);
 const message = ref('');
 
-// Fetch data
+// Fetching functions
 const fetchWalls = async () => {
   try {
     walls.value = await fetchAllWalls();
@@ -32,7 +32,7 @@ const fetchSpots = async () => {
   }
 };
 
-// Add or update wall
+// Add wall
 const addWall = async () => {
   if (!wallName.value || !selectedSpot.value?.spot_id) return;
 
@@ -59,7 +59,7 @@ const addWall = async () => {
 const deleteWall = async (id: number) => {
   try {
     await delWall(id);
-    walls.value = walls.value.filter((w) => w.id !== id);
+    walls.value = walls.value.filter((w) => w.wall_id !== id);
   } catch (err) {
     message.value = 'Error deleting wall.';
     console.error(err);
