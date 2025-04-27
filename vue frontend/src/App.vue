@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { computed } from 'vue'
+import { ref } from 'vue'
 
-const isLoggedIn = computed(() => {
-  return !!localStorage.getItem('token')
-})
+const isLoggedIn = ref(!!localStorage.getItem('token'))
 
 // Optional: listen to token changes (if you want it to react immediately)
 window.addEventListener('storage', () => {
   isLoggedIn.value = !!localStorage.getItem('token')
 })
 
+//remove token from localStorage to log out user
 function logout() {
   localStorage.removeItem('token')
-  isAuthenticated.value = false
-  window.location.reload() // or use router.push('/login')
+  isLoggedIn.value = false
+  window.location.reload()
 }
 
 </script>
-
 <template>
   <header>
     <h1>Climbing Tracker</h1>

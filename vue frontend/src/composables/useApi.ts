@@ -1,4 +1,5 @@
 // src/composables/useApi.ts
+// composable for reusing code in fetch functions in components. takes in endpoints and does CRUD.
 export const useApi = (endpoint: string) => {
   const baseUrl = `http://localhost:3000/${endpoint}`;
 

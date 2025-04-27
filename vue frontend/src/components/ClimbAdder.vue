@@ -4,19 +4,14 @@ import { useApi } from '@/composables/useApi';
 import { computed } from 'vue';
 import { watch } from 'vue';
 
+
 const { post: postClimb } = useApi('climbs');
 
+// Destructure API methods for routes, walls and spots
 const { fetchAll: fetchAllRoutes } = useApi('routes');
-
-// Destructure walls API methods
 const { fetchAll: fetchAllWalls } = useApi('walls');
-
-// Destructure spots API methods
 const { fetchAll: fetchAllSpots } = useApi('spots');
 
-
-
-const routeName = ref('');
 const selectedSpot = ref<any>(null); // Ensure it's an object (or null initially)
 const selectedWall = ref<any>(null);
 const selectedRoute = ref<any>(null);
@@ -26,6 +21,7 @@ const walls = ref<Array<any>>([]);
 const spots = ref<Array<any>>([]);
 const message = ref('');
 
+//fetching functions
 const fetchRoutes = async () => {
   try {
     routes.value = await fetchAllRoutes();
@@ -51,10 +47,11 @@ const fetchSpots = async () => {
 };
 
 const addClimb = async () => {
+  //checking if all values are filled
   if (!selectedRoute.value || !selectedRoute.value.route_id || !selectedSpot.value || !selectedSpot.value.spot_id || !selectedWall.value || !selectedWall.value.wall_id) return;
 
   const newClimb = {
-    climber_id: localStorage.getItem('climber_id'),
+    climber_id: localStorage.getItem('climber_id'), //using climber_id from localStorage
     spot_id: selectedSpot.value.spot_id,
     wall_id: selectedWall.value.wall_id,
     route_id: selectedRoute.value.route_id,
@@ -75,25 +72,28 @@ const addClimb = async () => {
   }
 };
 
-
+//Filters walls so that only walls in chosen spot is selectable
 const filteredWalls = computed(() => {
   if (!selectedSpot.value) return [];
   return walls.value.filter(wall => wall.spot_id === selectedSpot.value.spot_id);
 });
 
+//Filters routes so that only routes on chosen wall is selectable
 const filteredRoutes = computed(() => {
   if (!selectedWall.value && !selectedSpot.value) return [];
   return routes.value.filter(route => route.wall_id === selectedWall.value.wall_id && route.spot_id === selectedSpot.value.spot_id)
 })
 
+//Resets selected wall if user changes spot
 watch(selectedSpot, () => {
   selectedWall.value = null;
 });
 
-onMounted(() => {
-  fetchRoutes();
-  fetchwalls();
-  fetchSpots();
+//making asynchronous calls to make sure everything is loaded before populating
+onMounted(async () => {
+  await fetchRoutes();
+  await fetchwalls();
+  await fetchSpots();
 });
 </script>
 
@@ -109,7 +109,7 @@ onMounted(() => {
         </option>
       </select>
     </p>
-    <p v-if="selectedSpot">
+    <p v-if="selectedSpot"> <!-- shows only when spot is selected -->
   <h3>Choose wall:</h3>
   <select v-model="selectedWall">
     <option disabled value="">-- Select a wall --</option>
@@ -118,7 +118,7 @@ onMounted(() => {
     </option>
   </select>
 </p>
-    <p v-if="selectedWall">
+    <p v-if="selectedWall"> <!-- shows only when wall is selected -->
       Choose route:
       <br />
       <select v-model="selectedRoute">
