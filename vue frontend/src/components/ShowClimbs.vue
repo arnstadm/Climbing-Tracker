@@ -79,11 +79,11 @@ const climbsWithDetails = computed(() => {
   });
 });
 
-onMounted(async () => {
+onMounted(async () => { // fetches info from routes, walls, spots, then climbs
   await fetchRoutes();
   await fetchwalls();
   await fetchSpots();
-  await fetchMyClimbs(); //uses id stored in localStorage to only get climbs from logged in user
+  await fetchMyClimbs();
 });
 </script>
 
