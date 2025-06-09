@@ -12,13 +12,14 @@ export const useApi = (endpoint: string) => {
   };
 
   const fetchAll = async () => {
-    const res = await fetch(baseUrl);
+    const res = await fetch(baseUrl, {
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('Failed to fetch data');
     return await res.json();
   };
 
   const fetchMy = async () => {
-    console.log(getAuthHeaders());
     const res = await fetch(`${baseUrl}/climber/me`, {
       headers: getAuthHeaders(),
     });
