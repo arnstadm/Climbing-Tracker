@@ -83,7 +83,7 @@ onMounted(async () => {
   await fetchRoutes();
   await fetchwalls();
   await fetchSpots();
-  await fetchMyClimbs(Number(localStorage.getItem('climber_id')), 'climber'); //uses id stored in localStorage to only get climbs from logged in user
+  await fetchMyClimbs(); //uses id stored in localStorage to only get climbs from logged in user
 });
 </script>
 
