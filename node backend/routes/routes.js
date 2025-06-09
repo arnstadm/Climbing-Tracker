@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var pool = require('../db');
+var authenticateToken = require('../middleware/auth');
 
 // Create a route
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { route_name, route_grade, spot_id, wall_id } = req.body;
     const result = await pool.query(
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
 });
 
 // Read all routes
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM routes');
     res.json(result.rows);
@@ -29,7 +30,7 @@ router.get('/', async (req, res) => {
 });
 
 // Read single route
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('SELECT * FROM routes WHERE route_id = $1', [id]);
@@ -42,7 +43,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update route
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { route_name, route_grade, spot_id, wall_id } = req.body;
@@ -59,7 +60,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete route
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('DELETE FROM routes WHERE route_id = $1 RETURNING *', [id]);

@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var pool = require('../db');
+var authenticateToken = require('../middleware/auth');
 
 // Create a wall
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { wall_name, spot_id } = req.body;
     const result = await pool.query(
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
 });
 
 // Read all walls
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM walls');
     res.json(result.rows);
@@ -29,7 +30,7 @@ router.get('/', async (req, res) => {
 });
 
 // Read single wall
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('SELECT * FROM walls WHERE wall_id = $1', [id]);
@@ -42,7 +43,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update wall
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { wall_name, spot_id } = req.body;
@@ -59,7 +60,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete wall
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('DELETE FROM walls WHERE wall_id = $1 RETURNING *', [id]);
