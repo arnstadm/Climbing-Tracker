@@ -3,7 +3,7 @@
 export const useApi = (endpoint: string) => {
   const baseUrl = `http://localhost:3000/${endpoint}`;
 
-  const getAuthHeaders = () => {
+  const getAuthHeaders = () => { // takes token from localstorage and formats it for authorization headers
     const token = localStorage.getItem('token');
     return {
       'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export const useApi = (endpoint: string) => {
     };
   };
 
-  const fetchAll = async () => {
+  const fetchAll = async () => { // fetches all objects from tables
     const res = await fetch(baseUrl, {
       headers: getAuthHeaders(),
     });
@@ -19,7 +19,7 @@ export const useApi = (endpoint: string) => {
     return await res.json();
   };
 
-  const fetchMy = async () => {
+  const fetchMy = async () => { // fetches only the data that belongs to the signed in climber
     const res = await fetch(`${baseUrl}/climber/me`, {
       headers: getAuthHeaders(),
     });
@@ -27,7 +27,7 @@ export const useApi = (endpoint: string) => {
     return await res.json();
   };
 
-  const post = async (payload: Record<string, any>) => {
+  const post = async (payload: Record<string, any>) => { // posting data using authorization headers
     const res = await fetch(baseUrl, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -37,7 +37,7 @@ export const useApi = (endpoint: string) => {
     return await res.json();
   };
 
-  const put = async (id: number | string, payload: Record<string, any>) => {
+  const put = async (id: number | string, payload: Record<string, any>) => { // updates data using authorization headers
     const res = await fetch(`${baseUrl}/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
@@ -47,7 +47,7 @@ export const useApi = (endpoint: string) => {
     return await res.json();
   };
 
-  const del = async (id: number | string) => {
+  const del = async (id: number | string) => { // deletes data using authorization headers
     const res = await fetch(`${baseUrl}/${id}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
