@@ -6,7 +6,7 @@ var bcrypt = require('bcrypt');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-//process login and return a token + user id for localStorage in webapp
+//process login and return a token for localStorage in webapp
 router.post('/', async (req, res) => {
     const { climber_name, password } = req.body
     try {
@@ -17,8 +17,8 @@ router.post('/', async (req, res) => {
       const match = await bcrypt.compare(password, user.password_hash)
       if (!match) return res.status(400).json({ message: 'Invalid credentials' })
   
-      const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' })
-      res.json({ token, user })
+      const token = jwt.sign({ userId: user.climber_id }, JWT_SECRET, { expiresIn: '1h' })
+      res.json({ token })
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Login error' });

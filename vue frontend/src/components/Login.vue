@@ -19,14 +19,12 @@ const login = async () => {
 
   try {
     const res = await post(user)
-    console.log(res)
 
     if (res.error || !res.token) {
       throw new Error(res.message || 'Login failed')
     }
 
     localStorage.setItem('token', res.token)
-    localStorage.setItem('climber_id', res.user.climber_id)
     router.push('/about')
   } catch (err: any) {
     error.value = err.message || 'An error occurred'

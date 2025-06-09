@@ -30,9 +30,9 @@ const deleteclimb = async (id: number) => {
 };
 
 //fetching functions
-const fetchMyClimbs = async (id: number, identifier: string) => {
+const fetchMyClimbs = async () => {
   try {
-    climbs.value = await fetchMy(id, identifier);
+    climbs.value = await fetchMy();
   } catch (err) {
     message.value = 'Error fetching climbs.';
   }

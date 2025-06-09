@@ -3,14 +3,25 @@
 export const useApi = (endpoint: string) => {
   const baseUrl = `http://localhost:3000/${endpoint}`;
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   const fetchAll = async () => {
     const res = await fetch(baseUrl);
     if (!res.ok) throw new Error('Failed to fetch data');
     return await res.json();
   };
 
-  const fetchMy = async (id: number | string, identifier: string) => {
-    const res = await fetch(`${baseUrl}/${identifier}/${id}`);
+  const fetchMy = async () => {
+    console.log(getAuthHeaders());
+    const res = await fetch(`${baseUrl}/climber/me`, {
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('Failed to fetch data');
     return await res.json();
   };
@@ -18,9 +29,7 @@ export const useApi = (endpoint: string) => {
   const post = async (payload: Record<string, any>) => {
     const res = await fetch(baseUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error('Failed to post data');
@@ -30,9 +39,7 @@ export const useApi = (endpoint: string) => {
   const put = async (id: number | string, payload: Record<string, any>) => {
     const res = await fetch(`${baseUrl}/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error('Failed to update data');
@@ -42,6 +49,7 @@ export const useApi = (endpoint: string) => {
   const del = async (id: number | string) => {
     const res = await fetch(`${baseUrl}/${id}`, {
       method: 'DELETE',
+      headers: getAuthHeaders(),
     });
     if (!res.ok) throw new Error('Failed to delete data');
     return true;
