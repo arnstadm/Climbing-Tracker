@@ -8,6 +8,7 @@ const { fetchAll: fetchAllRoutes, post: postRoute} = useApi('routes');
 // Destructure walls and spot API methods
 const { fetchAll: fetchAllWalls, post: postWall } = useApi('walls');
 const { fetchAll: fetchAllSpots } = useApi('spots');
+const photoUploader = useApi('upload');
 
 const routeName = ref('');
 const wallName = ref('');
@@ -23,6 +24,8 @@ const { grades } = climbingGrades();
 const photoInput = ref<HTMLInputElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const image = ref<HTMLImageElement | null>(null)
+
+
 
 //fetching functions
 const fetchRoutes = async () => {
@@ -60,45 +63,64 @@ const fetchSpots = async () => {
   }
 };
 
-// Add wall and route
+// adds the wall first to get a wall id, then uploads the photo, then the route
 const addWallAndRoute = async () => {
-  if (!wallName.value || !selectedSpot.value?.spot_id) return;
-
-  const newWall = {
-    wall_name: wallName.value,
-    spot_id: selectedSpot.value.spot_id,
-  };
-
-  try {
-      const data = await postWall(newWall);
-      selectedWall.value = data;
-
-    message.value = 'Wall saved!';
-  } catch (err) {
-    message.value = 'Error saving wall.';
-    console.error(err);
+  if (!wallName.value ||
+      !selectedSpot.value?.spot_id ||
+      !selectedGrade.value ||
+      !routeName.value) {
+    return;
   }
-  //checking if all values are filled
-  if (!routeName.value || !selectedSpot.value || !selectedSpot.value.spot_id || !selectedWall.value || !selectedWall.value.wall_id ) return;
 
-  const newroute = {
-    route_name: routeName.value,
-    route_grade: selectedGrade.value,
-    spot_id: selectedSpot.value.spot_id,
-    wall_id: selectedWall.value.wall_id,
-  };
+  let wallId;
 
   try {
-      await postRoute(newroute);
-    // Reset values
+    const newWall = {
+      wall_name: wallName.value,
+      spot_id: selectedSpot.value.spot_id,
+    };
+    const wall = await postWall(newWall);
+    wallId = wall.wall_id;
+
+    message.value = 'Wall successfully created';
+  } catch (err) {
+    console.error(err);
+    message.value = 'Error creating wall';
+    return;
+  }
+
+if (photoInput.value?.files.length) {
+  try {
+    const formData = new FormData();
+    formData.append('photo', photoInput.value.files[0]);
+    formData.append('wall_id', wallId.toString());
+
+    const response = await photoUploader.uploadPhoto(formData);
+    console.log('Upload response:', response);
+    message.value = response.message || 'Photo successfully uploaded';
+  } catch (err) {
+    console.error(err);
+    message.value = 'Error uploading photo';
+    return;
+  }
+}
+
+  try {
+    await postRoute({
+      route_name: routeName.value,
+      route_grade: selectedGrade.value,
+      spot_id: selectedSpot.value.spot_id,
+      wall_id: wallId
+    });
     routeName.value = '';
     selectedSpot.value = null;
     selectedWall.value = null;
-    selectedGrade.value = null;
-    message.value = 'Route saved!';
+    selectedGrade.value = '';
+    wallName.value = '';
+    message.value = 'Route successfully saved';
   } catch (err) {
-    message.value = 'Error saving Route.';
     console.error(err);
+    message.value = 'Error saving route';
   }
 };
 

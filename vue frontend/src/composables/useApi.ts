@@ -56,5 +56,26 @@ export const useApi = (endpoint: string) => {
     return true;
   };
 
-  return { fetchAll, fetchMy, post, put, del };
+
+  const uploadPhoto = async (formData: FormData) => {
+    const headers = { ...getAuthHeaders() };
+    delete headers['Content-Type'];
+
+    const res = await fetch(`${baseUrl}/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('Upload failed:', errorText);
+      throw new Error(`Upload failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data; // Return the whole response object
+  };
+
+  return { fetchAll, fetchMy, post, put, del, uploadPhoto };
 };

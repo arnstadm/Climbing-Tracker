@@ -14,8 +14,10 @@ var routesRouter = require('./routes/routes');
 var spotsRouter = require('./routes/spots');
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
+var uploadsRouter = require('./routes/upload');
 
 var app = express();
+
 // Allow all origins (good for dev, not for production)
 app.use(cors());
 
@@ -37,6 +39,8 @@ app.use('/routes', routesRouter);
 app.use('/spots', spotsRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
+app.use('/upload', uploadsRouter);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
